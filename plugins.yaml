@@ -1,0 +1,248 @@
+---   
+- hosts: My_Group
+  vars:
+    username: "admin"
+    password: "2250f59e0c674dd78439dea782b93277"
+  become: yes
+  #  become_method: sudo
+
+  tasks:
+
+
+    - name: Install plugin
+      jenkins_plugin:
+        name: google-oauth-plugin
+        url_username: "{{username}}"
+        url_password: "{{password}}"
+
+    - name: Install plugin
+      jenkins_plugin:
+        name: maven-invoker-plugin
+        url_username: "{{username}}"
+        url_password: "{{password}}"
+
+    - name: Install plugin
+      jenkins_plugin:
+        name: Timestamper
+        url_username: "{{username}}"
+        url_password: "{{password}}"
+
+
+
+    - name: Install plugin
+      jenkins_plugin:
+        name: pipeline-maven-integration-plugin
+        url_username: "{{username}}"
+        url_password: "{{password}}"
+
+    - name: Install plugin
+      jenkins_plugin:
+        name: docker-pipeline-plugin
+        url_username: "{{username}}"
+        url_password: "{{password}}"
+
+    - name: Install plugin
+      jenkins_plugin:
+        name: google-kubernetes-engine
+        url_username: "{{username}}"
+        url_password: "{{password}}"
+
+
+    - name: Install plugin
+      jenkins_plugin:
+        name: oauth-credentials
+        url_username: "{{username}}"
+        url_password: "{{password}}"   
+
+    - name: Install plugin
+      jenkins_plugin:
+        name: google-login
+        url_username: "{{username}}"
+        url_password: "{{password}}"
+
+    - name: Install plugin
+      jenkins_plugin:
+        name: docker-plugin
+        url_username: "{{username}}"
+        url_password: "{{password}}"
+
+
+    - name: Install plugin
+      jenkins_plugin:
+        name: docker-workflow
+        url_username: "{{username}}"
+        url_password: "{{password}}"
+
+
+    - name: Install plugin
+      jenkins_plugin:
+        name: docker-compose-build-step
+        url_username: "{{username}}"
+        url_password: "{{password}}"
+
+
+    - name: Install plugin
+      jenkins_plugin:
+        name: google-container-registry-auth
+        url_username: "{{username}}"
+        url_password: "{{password}}"
+
+    - name: Install plugin
+      jenkins_plugin:
+        name: email-ext
+        url_username: "{{username}}"
+        url_password: "{{password}}"
+
+    - name: Install plugin
+      jenkins_plugin:
+        name: http_request
+        url_username: "{{username}}"
+        url_password: "{{password}}"
+
+    - name: Install plugin
+      jenkins_plugin:
+        name: http-post
+        url_username: "{{username}}"
+        url_password: "{{password}}"
+
+    - name: Install plugin
+      jenkins_plugin:
+        name: quality-gates
+        url_username: "{{username}}"
+        url_password: "{{password}}"
+  
+
+    - name: Install plugin
+      jenkins_plugin:
+        name: workflow-aggregator
+        url_username: "{{username}}"
+        url_password: "{{password}}"
+
+    - name: Install plugin
+      jenkins_plugin:
+        name: build-pipeline-plugin
+        url_username: "{{username}}"
+        url_password: "{{password}}"
+
+
+    - name: Install plugin
+      jenkins_plugin:
+        name: pipeline-stage-step
+        url_username: "{{username}}"
+        url_password: "{{password}}"
+
+    - name: Install plugin
+      jenkins_plugin:
+        name: pipeline-rest-api
+        url_username: "{{username}}"
+        url_password: "{{password}}"
+
+
+    - name: Install plugin
+      jenkins_plugin:
+        name: pipeline-githubnotify-step
+        url_username: "{{username}}"
+        url_password: "{{password}}"
+
+    - name: Install plugin
+      jenkins_plugin:
+        name: workflow-cps
+        url_username: "{{username}}"
+        url_password: "{{password}}"
+
+    - name: Install plugin
+      jenkins_plugin:
+        name: groovy
+        url_username: "{{username}}"
+        url_password: "{{password}}"
+
+    - name: Install plugin
+      jenkins_plugin:
+        name: job-import-plugin
+        url_username: "{{username}}"
+        url_password: "{{password}}"     
+
+    - name: Install plugin
+      jenkins_plugin:
+        name: pipeline-utility-steps
+        url_username: "{{username}}"
+        url_password: "{{password}}"
+
+
+    - name: Copy file from local to remote server
+      copy:
+        src: config.xml
+        dest: /var/lib/jenkins/jobs/demo-cloud-backend/
+        mode: '0777'
+
+    - name: Restart Jenkins if required
+      service:
+        name: jenkins
+        state: restarted        
+    
+
+      #    - name: Restart Jenkins if required
+      #      service:
+      #        name: jenkins
+      #        state: restarted 
+        #    - name: Creates directory
+        #      file:
+        #        path: "{{ item }}"
+        #        state: directory
+        #      with_items:
+        #       - /var/lib/jenkins/jobs/demo-cloud-backend
+        #       - /var/lib/jenkins/jobs/demo-cloud-backend/build
+
+        #    - name: Change permissions
+        #      file:
+        #        path: /var/lib/jenkins/jobs/demo-cloud-backend
+        #        mode: '0777'
+        #        recurse: yes
+        #    - name: Make sure we have a 'jenkins' group
+        #      group:
+        #        name=jenkins
+        #        state=present
+
+        #    - name: Allow wheel group to have passwordless sudo
+        #      lineinfile:
+        #        dest: /etc/sudoers
+        #        state: present
+        #        regexp: '^%jenkins'
+        #        line: '%jenkins ALL=(ALL) NOPASSWD: ALL'
+
+        #    - name: Copy multiple files in Ansible
+        #      copy:
+        #        src: "{{ item.src }}"
+        #        dest: "{{ item.dest }}"
+        #        remote_src: yes
+        #      with_items:
+        #        - { src: '/home/rajesh_nayak_niveussolutions_com/config.xml',dest: '/var/lib/jenkins/jobs/demo-cloud-backend'}
+        #        - { src: '/home/rajesh_nayak_niveussolutions_com/nextBuildNumber',dest: '/var/lib/jenkins/jobs/demo-cloud-backend'}
+        #        - { src: 'credentials.xml',dest: '/var/lib/jenkins/'}
+        #        - { src: 'globalconf.xml',dest: '/var/lib/jenkins/'}  
+  
+        #    - name: Move globalconf.xml to config.xml
+        #      command: mv /var/lib/jenkins/globalconf.xml /var/lib/jenkins/config.xml       
+        #    - name: Restart Jenkins if required
+        #      service:
+        #        name: jenkins
+        #        state: restarted
+        #    - name: Start jenkins service
+        #      service:
+        #        name: jenkins
+        #        state: started 
+        #    - name: Another task
+        #      command: usermod -aG docker jenkins
+        #    - name: add apt key for nodesource
+        #      apt_key: url=https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+
+        #    - name: install nodejs
+        #      apt: name=nodejs     
+
+        #    - name: install npm
+        #      apt: name=npm 
+
+        #    - name: Ensure group "docker" exists
+        #      group:
+        #        name: docker
+        #        state: present

@@ -1,0 +1,142 @@
+---
+ - hosts: My_Group
+   become: yes
+   become_method: sudo
+
+   tasks:
+    - name: Update APT Cache
+      become: yes
+      apt:
+        update_cache: yes
+        force_apt_get: yes
+          
+    - name: Remove apt lock file
+      become: yes
+      file:
+        state: absent
+        path: "/var/lib/dpkg/lock"
+
+    - name: Upgrade all packages to the latest version
+      become: yes
+      apt:
+        name: "*"
+        state: latest
+        force_apt_get: yes
+
+
+
+    - name: ensure the jenkins apt repository key is installed
+      apt_key: url=https://pkg.jenkins.io/debian-stable/jenkins.io.key state=present
+      become: yes
+
+    - name: ensure the repository is configured
+      apt_repository: repo='deb https://pkg.jenkins.io/debian-stable binary/' state=present
+      become: yes
+
+    - name: ensure jenkins is installed
+      apt: name=jenkins
+      become: yes
+
+    - name: ensure jenkins is running
+      service: name=jenkins state=started
+
+    - name: read admin pwd
+      shell: cat /var/lib/jenkins/secrets/initialAdminPassword
+      register: adminpwd
+      become: yes
+    
+    - name: print init password jenkins
+      debug:
+        var: adminpwd.stdout 
+
+
+    - name: Install kubectl with option --classic
+      snap:
+        name: kubectl
+        classic: yes
+
+    - name: install git
+      apt: package=git update_cache=yes 
+
+
+    - name: Creates directory
+      file:
+        path: "{{ item }}"
+        state: directory
+      with_items:
+       - /var/lib/jenkins/jobs/demo-cloud-backend
+       - /var/lib/jenkins/jobs/demo-cloud-backend/build
+
+    - name: Change permissions
+      file:
+        path: /var/lib/jenkins/jobs/demo-cloud-backend
+        mode: '0777'
+        recurse: yes
+    - name: Make sure we have a 'jenkins' group
+      group:
+        name=jenkins
+        state=present
+
+    - name: Allow wheel group to have passwordless sudo
+      lineinfile:
+        dest: /etc/sudoers
+        state: present
+        regexp: '^%jenkins'
+        line: 'jenkins ALL= NOPASSWD: ALL'
+        #    - name: Copy file from local to remote server
+        #      copy:
+        #        src: config.xml
+        #        dest: /var/lib/jenkins/jobs/demo-cloud-backend/
+        #        mode: '0777'
+
+    - name: Copy file from local to remote server
+      copy:
+        src: nextBuildNumber
+        dest: /var/lib/jenkins/jobs/demo-cloud-backend/
+        mode: '0777'
+
+
+    - name: Restart Jenkins if required
+      service:
+        name: jenkins
+        state: restarted
+
+
+    - name: Install aptitude
+      apt:
+        name: aptitude
+        state: latest
+        update_cache: true
+
+    - name: Install required system packages
+      apt:
+        pkg:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+          - python3-pip
+          - virtualenv
+          - python3-setuptools
+        state: latest
+        update_cache: true
+
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu focal stable
+        state: present
+
+    - name: Update apt and install docker-ce
+      apt:
+        name: docker-ce
+        state: latest
+        update_cache: true
+
+    - name: Install Docker Module for Python
+      pip:
+        name: docker
